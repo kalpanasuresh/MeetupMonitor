@@ -1,0 +1,15 @@
+Hive Scripts:
+
+For Tableau: Create link to HBase from since Tableau can't directly connect with HBase
+
+CREATE EXTERNAL TABLE top100City(key string, value string) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler' WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,cf:$1 ") 
+TBLPROPERTIES ("hbase.table.name" = "top100City");
+
+
+//Script to create Hive table for meetup RSVP dataset
+CREATE DATABASE meetup;
+USE meetup;
+ADD JAR /home/ec2-user/Kalpana/hive-serdes-1.0-SNAPSHOT.jar
+ 
+CREATE EXTERNAL TABLE meetuprsvp(  event STRUCT<event_id:STRING,	event_name:STRING,event_url:STRING,time:STRING>,  group STRUCT<group_city:STRING,group_country:STRING,group_id:STRING,group_lat:STRING,group_lon:STRING,group_name:STRING,group_state:STRING,group_topics:array<STRUCT<topic_name:STRING,urlkey:STRING>>, group_urlname:STRING>,  guests STRING,   member STRUCT< member_id:STRING,	member_name:STRING,	other_services:STRING,	photo:STRING>,	mtime STRING,response STRING, rsvp_id STRING,venue STRUCT< lat:STRING,	lon:STRING,	venue_id:STRING,	venue_name:STRING>) PARTITIONED BY (  YEAR INT,  MONTH INT,  DAY INT,  HOUR INT) ROW FORMAT SERDE 'com.cloudera.hive.serde.JSONSerDe' LOCATION  '/user/hdfs/data/meetupRSVP/hourly';
