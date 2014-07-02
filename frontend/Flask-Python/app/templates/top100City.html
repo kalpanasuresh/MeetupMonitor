@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <body>
+    
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='d3.layout.cloud.js') }}"></script>
+        <script>
+            var fill = d3.scale.category20();
+
+            var fontSize = d3.scale.log().range([10, 100]);
+              d3.layout.cloud().size([600, 600])
+              .words(d3.zip({{datakey|safe}},{{datavalue|safe}}).map(function(d) {
+                  return {text: d[0],size: d[1] };
+                                      }))
+                                            .padding(1)
+                                                  .rotate(function() { return ~~(Math.random() * 5) * 30-60; })
+                                                        .font("Impact")
+                                                              .fontSize(function(d) { return d.size; })
+                                                                    .on("end", draw)
+                                                                          .start();
+
+                                                                            function draw(words) {
+                                                                                    d3.select("body").append("svg")
+                                                                                            .attr("width", 600)
+                                                                                                    .attr("height", 600)
+                                                                                                          .append("g")
+                                                                                                                  .attr("transform", "translate(300,300)")
+                                                                                                                        .selectAll("text")
+                                                                                                                                .data(words)
+                                                                                                                                      .enter().append("text")
+                                                                                                                                              .style("font-size", function(d) { return d.size + "px"; })
+                                                                                                                                                      .style("font-family", "Impact")
+                                                                                                                                                              .style("fill", function(d, i) { return fill(i); })
+                                                                                                                                                                      .attr("text-anchor", "middle")
+                                                                                                                                                                              .attr("transform", function(d) {
+                                                                                                                                                                                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                                                                                                                                                                                                    })
+                                                                                                                                                                                                            .text(function(d) { return d.text; });
+                                                                                                                                                                                                              }
+                                                                                                                                                                                                                          </script>
+                                                                                                                                                                                                                      </body>
+                                                                                                                                                                                                                  </html>
+
