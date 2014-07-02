@@ -1,3 +1,3 @@
 MeetupMonitor
 =============
-  Refer to the wiki page to setup and run Meetup Monitor
+  Refer to the [wiki page] (https://github.com/kalpanasuresh/MeetupMonitor/wiki) to setup and run Meetup Monitor
