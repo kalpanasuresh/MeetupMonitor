@@ -5,7 +5,7 @@ import collections
 app = Flask(__name__)
 
 #HBase Connections
-connection = happybase.Connection(<HBase IP Addr>)
+connection = happybase.Connection('ip-172-31-2-26')
 
 # ROUTING/VIEW FUNCTIONS
 
@@ -13,33 +13,35 @@ connection = happybase.Connection(<HBase IP Addr>)
 def groups():
     table = connection.table('top10groups')
     rows = table.scan()
-    data ={}
-    datakey=[]
-    datavalue=[]
+    rowData ={}
+    sortedData=[]
     for key,value  in rows:
-        data[key]=int(value['cf:$1'])
-        key=key.replace("'","")
-        datavalue.append(int(data[key]))
-    for key, value in sorted(data.iteritems(), key=lambda (k,v): (v,k),  reverse=True):
-        datakey.append(key)
-    return render_template('top10groups.html',data =datakey)
+       
+        key = key.replace("(","").replace(")","")
+       
+        rowData[key]=int(value['cf:$1'])
+        
+    for key, value in sorted(rowData.iteritems(), key=lambda (k,v): (v,k),  reverse=True):
+        sortedData.append(key)
+    return render_template('top10groups.html',data =sortedData)
 
 @app.route('/meetup/top20Topics')
 def Topics():
     table = connection.table('top20Topics')
     rows = table.scan()
-    data ={}
-    datakey=[]
-    datavalue=[]
+    rowData ={}
+    sortedData=[]
+    
     for key,value  in rows:
-        data[key]=int(value['cf:$1'])
-        key=key.replace("'","")
-        datavalue.append(int(data[key]))
-    for key, value in sorted(data.iteritems(), key=lambda (k,v): (v,k),  reverse=True):
-        print key
-        print value
-        datakey.append(key)
-    return render_template('top20Topics.html',data =datakey)
+        
+        key = key.replace("(","").replace(")","")
+        
+        rowData[key]=int(value['cf:$1'])
+
+    for key, value in sorted(rowData.iteritems(), key=lambda (k,v): (v,k),  reverse=True):
+        sortedData.append(key)
+    
+    return render_template('top20Topics.html',data =sortedData)
 
 @app.route('/meetup/<string:taskName>')
 def indexi(taskName):
@@ -51,7 +53,7 @@ def indexi(taskName):
     for key,value  in rows:
         data[key]=int(value['cf:$1'])
         key=key.replace("'","")
-    #set font size
+    #set font size for word cloud
         i=25
     for key, value in sorted(data.iteritems(), key=lambda (k,v): (v,k),  reverse=True): 
         datakey.append(key)
@@ -61,6 +63,17 @@ def indexi(taskName):
             datavalue.append(int(i*2))
             i=i-1
     return render_template('top100City.html',datakey=datakey,datavalue=datavalue)
+
+
+@app.route('/meetup/topicBycity/<string:taskName>')
+def indexCity(taskName):
+        table = connection.table('topicBycity')
+        rows =table.row(taskName)
+        print rows['topics:topic']
+        return render_template('topicBycity.html',data =rows['topics:topic'])
+#        return stringify(rows['cf1:$1'])
+
+
 
 @app.errorhandler(404)
 def page_not_found(error):
