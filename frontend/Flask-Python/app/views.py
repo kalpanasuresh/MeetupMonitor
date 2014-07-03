@@ -5,7 +5,7 @@ import collections
 app = Flask(__name__)
 
 #HBase Connections
-connection = happybase.Connection('ip-172-31-2-26')
+connection = happybase.Connection(<HBase IP Addr>)
 
 # ROUTING/VIEW FUNCTIONS
 
