@@ -1,11 +1,12 @@
 from flask import render_template,Flask, jsonify
 import happybase
 import collections
+import os
 
 app = Flask(__name__)
 
 #HBase Connections
-connection = happybase.Connection('HBase Ip')
+connection = happybase.Connection('ip-172-31-2-26')
 
 # ROUTING/VIEW FUNCTIONS
 
@@ -51,6 +52,7 @@ def indexi(taskName):
     datakey =[]
     datavalue=[]
     for key,value  in rows:
+        key = key.replace("(","").replace(")","")
         data[key]=int(value['cf:$1'])
         key=key.replace("'","")
     #set font size for word cloud
@@ -67,10 +69,21 @@ def indexi(taskName):
 
 @app.route('/meetup/topicBycity/<string:taskName>')
 def indexCity(taskName):
+        topics=""
         table = connection.table('topicBycity')
+
         rows =table.row(taskName)
-        print rows['topics:topic']
-        return render_template('topicBycity.html',data =rows['topics:topic'])
+        topics =rows['topics:topic']
+        # print topics
+        #topics = rows[taskName]
+        topics.replace("{","")
+        topics.replace("}","")
+        topics.replace("(","")
+        topics.replace(")","")
+        print topics
+        return render_template('topicBycity.html',data =topics)
+#        return stringify(rows['cf1:$1'])
+
 
 
 @app.errorhandler(404)
@@ -82,5 +95,5 @@ def internal_error(error):
     return render_template('500.html'), 500
 
 if __name__ == '__main__':
-    app.run("0.0.0.0" , debug = True)
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT', '5007')), debug=False, threaded=True)
 
