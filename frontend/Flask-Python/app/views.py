@@ -5,7 +5,7 @@ import collections
 app = Flask(__name__)
 
 #HBase Connections
-connection = happybase.Connection('ip-172-31-2-26')
+connection = happybase.Connection('HBase Ip')
 
 # ROUTING/VIEW FUNCTIONS
 
@@ -71,8 +71,6 @@ def indexCity(taskName):
         rows =table.row(taskName)
         print rows['topics:topic']
         return render_template('topicBycity.html',data =rows['topics:topic'])
-#        return stringify(rows['cf1:$1'])
-
 
 
 @app.errorhandler(404)

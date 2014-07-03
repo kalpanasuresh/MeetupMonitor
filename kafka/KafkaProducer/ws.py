@@ -11,18 +11,9 @@ from kafka.producer import SimpleProducer, KeyedProducer
 from websocket import create_connection
 
 
-def on_message(ws, message):
-  
+def on_message(ws, message):  
     producer.send_messages("meetupRSVP", message)
-    #producer = SimpleProducer(kafka, batch_send=True,
-    #                     batch_send_every_n=20,
-    #                    batch_send_every_t=60)
-
-# To consume messages
-   # consumer = SimpleConsumer(kafka, "my-group", "meetupRSVP")
-    #for message in consumer:
-     # print(message)
-
+   
 def on_error(ws, error):
     print error
 
@@ -32,22 +23,15 @@ def on_close(ws):
 
 def on_open(ws):
     def run(*args):
-#        for i in range(3):
-#	     producer = SimpleProducer(kafka, async=True)
-#            producer.send_messages("meetupRSVP", ws.recv())
-#            time.sleep(1)
-#           ws.send("Hello %d" % i)
         time.sleep(1)
         ws.close()
-        print "thread terminating..."
-        #producer = SimpleProducer(kafka, async=True)
-        #producer.send_messages("meetupRSVP", ws.recv())
+       
         thread.start_new_thread(run, ())
 
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
-    kafka = KafkaClient("ip-172-31-2-26:9092,ip-172-31-2-26:9093,ip-172-31-2-26:9094")
+    kafka = KafkaClient("host:9092,host:9093,host:9094")
     producer = SimpleProducer(kafka, async=True)
     ws = websocket.WebSocketApp("ws://stream.meetup.com/2/rsvps",
                               on_message = on_message,
@@ -56,45 +40,3 @@ if __name__ == "__main__":
     ws.on_open = on_open
     ws.run_forever()
 
-
-# To send messages synchronously
-#producer = SimpleProducer(kafka)
-#producer.send_messages("test", ws.recv())
-#producer.send_messages("test", "this method", "is variadic")
-
-# To send messages asynchronously
-#producer = SimpleProducer(kafka, async=True)
-#producer.send_messages("test", ws.recv())
-#ws.run_forever()
-# To wait for acknowledgements
-# ACK_AFTER_LOCAL_WRITE : server will wait till the data is written to
-#                         a local log before sending response
-# ACK_AFTER_CLUSTER_COMMIT : server will block until the message is committed
-#                            by all in sync replicas before sending a response
-#producer = SimpleProducer(kafka, async=False,
- #                         req_acks=SimpleProducer.ACK_AFTER_LOCAL_WRITE,
-#                          ack_timeout=2000)
-
-#response = producer.send_messages("test",ws.recv() )
-
-#if response:
- #   print(response[0].error)
-  #  print(response[0].offset)
-
-# To send messages in batch. You can use any of the available
-# producers for doing this. The following producer will collect
-# messages in batch and send them to Kafka after 20 messages are
-# collected or every 60 seconds
-# Notes:
-# * If the producer dies before the messages are sent, there will be losses
-# * Call producer.stop() to send the messages and cleanup
-#producer = SimpleProducer(kafka, batch_send=True,
- #                         batch_send_every_n=20,
-  #                        batch_send_every_t=60)
-
-# To consume messages
-#consumer = SimpleConsumer(kafka, "my-group", "test")
-#for message in consumer:
-#    print(message)
-
-#kafka.close()
