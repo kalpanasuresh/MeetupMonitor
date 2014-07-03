@@ -22,25 +22,16 @@
 
 	event_topic= Group m_filter by (eventName,venueName);
 
-
-	--dump group_topic;
-
 	count_rsvp = foreach event_topic { 
 		         unique_rsvpID = DISTINCT m_filter.rsvpID;
 			     generate group, COUNT(unique_rsvpID) as segment_cnt;
 			    };
 
 	count_rsvp_filter = FILTER count_rsvp BY segment_cnt > 10;
-	--#dump count_rsvp_filter;
-	--#DESCRIBE group_city;
-
-
+	
 	B =  ORDER count_rsvp_filter BY $1 DESC;
 	lim = LIMIT B 20;
-	--#DESCRIBE lim;
-
-	--dump lim;
-
+	
 	store lim into 'hbase://top20Topics'
 	 using org.apache.pig.backend.hadoop.hbase.HBaseStorage(
 	'cf:$1');

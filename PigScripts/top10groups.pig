@@ -21,7 +21,7 @@
 
 	group_member= Group m by (groupURL);
 
-
+    --count total members by group
 	count_members = foreach group_member { 
 					unique_memberId = DISTINCT m.memberId;
 					generate group, COUNT(unique_memberId) as segment_cnt;

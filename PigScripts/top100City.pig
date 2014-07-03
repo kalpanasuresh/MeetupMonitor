@@ -7,7 +7,7 @@
 
 	rsvp = LOAD '/user/hdfs/meetup/data/meetupRSVP/hourly/2014/*/*/*/meetupRSVP*' using com.twitter.elephantbird.pig.load.JsonLoader('-nestedLoad') as (json:map[]);
 
-	--#describe rsvp;
+	
 	x = foreach rsvp generate (chararray)json#'member'#'member_name' as memberName, (chararray)json#'member'#'photo' as photo, (chararray)json#'member'#'member_id' as 
 	memberId,(chararray)json#'response' as response,(chararray)json#'visibility' as visibility ,(chararray)json#'event'#'time' as eventTime, (chararray)json#'event'#'event_url' as 
 	eventURL,(chararray)json#'event'#'event_id'as eventId,(chararray)json#'event'#'event_name'as eventName,(chararray)json#'mtime' as mtime,(chararray)json#'guest' as guest , json#'rsvp_id'as 
