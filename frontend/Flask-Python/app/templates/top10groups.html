@@ -1,10 +1,114 @@
 <!doctype html>
 <html>
-       <body>
-           <p style="font-family:verdana;"><strong>Top 10 groups based on number of members</strong></p>
-                       <ul> {%for key in data %}
-                           <li>{{key}} </li>
-                               {%endfor%}
-                        </ul>
-        </body>
+<head>
+<title>Meetup Monitor</title>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
+
+<style>
+
+</style>
+
+
+</head>
+<body  >
+
+<h1 id="dashTitle">Meetup Monitor Dashboard</h1>
+<script type="text/javascript" src="{{ url_for('static', filename='d3.layout.cloud.js') }}"></script>
+<div id="topChart" style="float: left; width: 600px;">
+    <p style="font-family:verdana;"><strong>Top 100 cites based on total meetup groups</strong></p>
+</div>
+
+<div id="bottomsLeft" style="float:left; width: 750px;margin-left: 200px;font-family:verdana;">
+
+      <p style="font-family:verdana;"><strong>Top 10 groups based on number of members</strong></p>
+
+             </div>
+
+
+<div id="bottomLeft" style="float:left; width: 750px;height:700px;margin-left: 200px;font-family:verdana;">
+
+       </div>
+
+
+
+<div id="bottomRight" style="float:left; width: 850px; margin-left: 20px;font-family:verdana;">
+
+<p style="font-family:verdana;"><strong>Top 20 Topics based on "yes" RSVP count</strong></p>
+<ul> {%for key in datatopics %}
+<li>{{key}} </li>
+{%endfor%}
+</ul>
+
+</div>
+
+
+<script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable({{datagroups|safe}});	
+        var options = {
+
+           legend : 'none',
+           vAxis:{title:'Group Name',textStyle:{color: '#005500',  fontName:'verdana',fontSize: '12', paddingRight: '40',marginRight: '100'}, gridlines: {
+                   color: 'transparent'
+               }},
+hAxis : {textColor: '#ffffff',gridlines: {
+                color: 'transparent'
+            }},
+       chartArea: {left:350, width: 700} 
+ 
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById('bottomLeft'));
+        chart.draw(data, options);
+      }
+    </script>
+
+
+
+
+
+
+</div>
+<script>
+
+var fill = d3.scale.category20();
+
+var fontSize = d3.scale.log().range([10, 50]);
+d3.layout.cloud().size([600, 600])
+.words(d3.zip({{datakey|safe}},{{datavalue|safe}}).map(function(d) {
+return {text: d[0],size: d[1] };
+}))
+.rotate(function() { return ~~(Math.random() * 2) * 90; })
+.font("Impact")
+.fontSize(function(d) { return d.size; })
+.on("end", draw)
+.start();
+
+
+
+function draw(words) {
+d3.select("#topChart").append("svg:svg")
+.attr("width", 600)
+.attr("height", 600)
+.append("g")
+.attr("transform", "translate(300,300)")
+.selectAll("text")
+.data(words)
+.enter().append("text")
+.style("font-size", function(d) { return d.size + "px"; })
+.style("font-family", "Impact")
+.style("fill", function(d, i) { return fill(i); })
+.attr("text-anchor", "middle")
+.attr("transform", function(d) {
+return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+})
+.text(function(d) { return d.text; });
+}
+</script>
+
+</body>
 </html>
