@@ -18,7 +18,7 @@ Here are some sample outputs from the analysis:
 
 ![Top 20 Topics](/Screenshots/top20Topics.PNG)
 
-# Top 10 grous with most members:
+# Top 10 groups with most members:
 
 ![Top 10 groups](/Screenshots/top10groupschart.PNG)
 
