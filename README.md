@@ -20,7 +20,7 @@ Here are some sample outputs from the analysis:
 
 # Top 10 grous with most members:
 
-![Top 10 groups](/Screenshots/top10groups.PNG)
+![Top 10 groups](/Screenshots/top10groupschart.PNG)
 
 
 Please note: The anlaysis is based on the streaming data collected on and off over the last couple of weeks.
